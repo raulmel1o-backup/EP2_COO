@@ -20,20 +20,21 @@ public class Guest {
 
     public void addAvailability(LocalDateTime start, LocalDateTime end) {
         if (!start.toLocalDate().isEqual(end.toLocalDate()))
-            throw new DifferentDatesException(start.toLocalDate() + " is not equals to " + end.toLocalDate());
+            throw new DifferentDatesException(start.toLocalDate() + " is not equal to " + end.toLocalDate());
 
         final LocalDate date = start.toLocalDate();
 
+        TimeInterval intervalToAdd = new TimeInterval(start, end);
         if (availability.containsKey(date)) {
             List<TimeInterval> timeIntervalList = availability.get(date);
 
             timeIntervalList.forEach(timeInterval -> {
                 if (timeInterval.isWithin(start, end)) timeInterval.addInterval(start, end);
-                else timeIntervalList.add(new TimeInterval(start, end));
+                else timeIntervalList.add(intervalToAdd);
             });
 
         } else {
-            availability.put(date, List.of(new TimeInterval(start, end)));
+            availability.put(date, List.of(intervalToAdd));
         }
     }
 
