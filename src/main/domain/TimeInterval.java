@@ -2,7 +2,10 @@ package main.domain;
 
 import main.infra.exception.DifferentDatesException;
 
+import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -10,6 +13,7 @@ public class TimeInterval {
 
     private LocalDateTime start;
     private LocalDateTime end;
+    private boolean available;
 
     public static boolean isInExclusiveRange(LocalDateTime min, LocalDateTime max, LocalDateTime time){
         return min.isBefore(time) && max.isAfter(time);
@@ -21,7 +25,6 @@ public class TimeInterval {
                 || isInExclusiveRange(otherInterval.getStart(), otherInterval.getEnd(), this.start)
                 || isInExclusiveRange(otherInterval.getStart(), otherInterval.getEnd(), this.end) ;
     }
-
 
     public static List<TimeInterval> divideIfIntersects(TimeInterval intervalA, TimeInterval intervalB) {
         if (!intervalA.intersects(intervalB)) return new ArrayList<>();
@@ -63,6 +66,10 @@ public class TimeInterval {
         return end;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
     public void setEnd(LocalDateTime end) {
         this.end = end;
     }
@@ -71,12 +78,35 @@ public class TimeInterval {
         this.start = start;
     }
 
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public static List<TimeInterval> buildTimeIntervalList(LocalDate date) {
+        final ArrayList<TimeInterval> timeIntervals = new ArrayList<>();
+
+        for (int i = 0; i < 96; i++) {
+            LocalDateTime time = LocalDateTime.of(date, LocalTime.MIDNIGHT).plusMinutes(i * 15);
+            TimeInterval interval = new TimeInterval(time);
+
+            timeIntervals.add(interval);
+        }
+
+        return timeIntervals;
+    }
+
+    public TimeInterval(LocalDateTime start) {
+        this.start = start;
+        this.available = false;
+    }
+
     public TimeInterval(LocalDateTime start, LocalDateTime end) {
         if (!start.toLocalDate().isEqual(end.toLocalDate()))
             throw new DifferentDatesException(start.toLocalDate() + " is not equals to " + end.toLocalDate());
 
         this.start = start;
         this.end = end;
+        this.available = false;
     }
 
 }

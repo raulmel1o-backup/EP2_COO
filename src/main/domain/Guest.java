@@ -4,18 +4,18 @@ import main.infra.exception.DifferentDatesException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Guest {
 
     private final String email;
-    private final Map<LocalDate, List<TimeInterval>> availability;
+    private final Map<LocalDate, ArrayList<TimeInterval>> availability;
+    private final Map<LocalDate, List<TimeInterval>> newAvailability;
 
     public Guest(String email) {
         this.email = email;
         this.availability = new HashMap<>();
+        this.newAvailability = new HashMap<>();
     }
 
     public void addAvailability(LocalDateTime start, LocalDateTime end) {
@@ -24,17 +24,18 @@ public class Guest {
 
         final LocalDate date = start.toLocalDate();
 
-        TimeInterval intervalToAdd = new TimeInterval(start, end);
-        if (availability.containsKey(date)) {
-            List<TimeInterval> timeIntervalList = availability.get(date);
+        if (newAvailability.containsKey(date)) {
+            List<TimeInterval> timeIntervals = newAvailability.get(date);
 
-            timeIntervalList.forEach(timeInterval -> {
-                if (timeInterval.isWithin(start, end)) timeInterval.addInterval(start, end);
-                else timeIntervalList.add(intervalToAdd);
-            });
+            for (TimeInterval timeInterval : timeIntervals) {
+                if ((timeInterval.getStart().isEqual(start) || timeInterval.getStart().isAfter(start)) &&
+                        (timeInterval.getStart().plusMinutes(15).isEqual(end) || timeInterval.getStart().plusMinutes(15).isBefore(end))) {
+                    timeInterval.setAvailable(true);
+                }
+            }
 
         } else {
-            availability.put(date, List.of(intervalToAdd));
+            newAvailability.put(date, TimeInterval.buildTimeIntervalList(date));
         }
     }
 
@@ -42,7 +43,8 @@ public class Guest {
         return email;
     }
 
-    public Map<LocalDate, List<TimeInterval>> getAvailability() {
+
+    public Map<LocalDate, ArrayList<TimeInterval>> getAvailability() {
         return availability;
     }
 }

@@ -2,14 +2,12 @@ package test.domain;
 
 import main.domain.Guest;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 class GuestTest {
     public static void main(String[] args) {
         Should_Create_New_Guest();
-        Should_Add_Availability_To_Guest();
+        Should_Add_Guest_Availability();
     }
 
     private static void Should_Create_New_Guest() {
@@ -21,47 +19,22 @@ class GuestTest {
         System.err.println("Guest instantiation went wrong");
     }
 
-    private static void Should_Add_Availability_To_Guest() {
+    private static void Should_Add_Guest_Availability() {
         final Guest guest = guestBuilder();
-        final LocalDate date = LocalDate.of(2021, 7, 22);
-        final LocalDateTime start = LocalDateTime.of(date, LocalTime.of(12, 40));
-        final LocalDateTime end = LocalDateTime.of(date, LocalTime.of(12, 54));
 
+        guest.addAvailability(LocalDateTime.of(2021, 7, 22, 9, 40),
+                 LocalDateTime.of(2021, 7, 22, 10, 45));
 
+        guest.addAvailability(LocalDateTime.of(2021, 7, 22, 8, 15),
+                LocalDateTime.of(2021, 7, 22, 10, 30));
 
-        if (!guest.getAvailability().isEmpty()) {
-            System.err.println("Guest availability map should be empty but it has "
-                    + guest.getAvailability().size() + " elements");
+        guest.addAvailability(LocalDateTime.of(2021, 7, 22, 22, 40),
+                LocalDateTime.of(2021, 7, 22, 23, 55));
 
-            return;
-        }
+        guest.addAvailability(LocalDateTime.of(2021, 7, 22, 12, 40),
+                LocalDateTime.of(2021, 7, 22, 14, 22));
 
-        guest.addAvailability(start, end);
-
-        if (guest.getAvailability().size() != 1) {
-            System.err.println("Guest availability map should contain one element but it has "
-                    + guest.getAvailability().size() + " elements");
-
-            return;
-        }
-
-        if (!guest.getAvailability().containsKey(date)) {
-            System.err.println("Guest availability map should contain " + date);
-
-            return;
-        }
-
-        if (!guest.getAvailability().get(date).get(0).getStart().equals(start)) {
-            System.err.println("TimeInterval start time should be " + start + " but it was "
-                    + guest.getAvailability().get(date).get(0).getStart());
-
-            return;
-        }
-
-        if (!guest.getAvailability().get(date).get(0).getEnd().equals(end)) {
-            System.err.println("TimeInterval end time should be " + end + " but it was "
-                    + guest.getAvailability().get(date).get(0).getEnd());
-        }
+        System.out.println("meua migo");
     }
 
     private static Guest guestBuilder() {
