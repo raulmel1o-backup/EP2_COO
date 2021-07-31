@@ -27,7 +27,7 @@ public class MeetingScheduler {
         Guest guest = guestsList.stream().filter(g -> g.getEmail().equals(guestEmail)).collect(toList()).get(0);
         guest.addAvailability(start, end);
     }
-
+  
     public void showOverlapping() {
 
     }

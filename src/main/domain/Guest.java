@@ -43,6 +43,7 @@ public class Guest {
         return email;
     }
 
+
     public Map<LocalDate, ArrayList<TimeInterval>> getAvailability() {
         return availability;
     }

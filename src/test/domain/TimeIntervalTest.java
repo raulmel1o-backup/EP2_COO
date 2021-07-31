@@ -4,7 +4,6 @@ import main.domain.TimeInterval;
 
 import java.time.LocalDate;
 
-
 class TimeIntervalTest {
     public static void main(String[] args) {
         Should_Build_TimeIntervals_List();
