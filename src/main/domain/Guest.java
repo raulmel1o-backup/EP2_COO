@@ -25,13 +25,7 @@ public class Guest {
         if (!availability.containsKey(date)) availability.put(date, TimeInterval.buildTimeIntervalList(date));
 
         List<TimeInterval> timeIntervals = availability.get(date);
-
-        for (TimeInterval timeInterval : timeIntervals) {
-            if ((timeInterval.getStart().isEqual(start) || timeInterval.getStart().isAfter(start)) &&
-                    (timeInterval.getStart().plusMinutes(15).isEqual(end) || timeInterval.getStart().plusMinutes(15).isBefore(end))) {
-                timeInterval.setAvailable(true);
-            }
-        }
+        TimeInterval.addAvailability(start, end, timeIntervals);
     }
 
     public String getEmail() {

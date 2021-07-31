@@ -11,6 +11,15 @@ public class TimeInterval {
     private LocalDateTime end;
     private boolean available;
 
+    public static void addAvailability(LocalDateTime start, LocalDateTime end, List<TimeInterval> timeIntervals) {
+        for (TimeInterval timeInterval : timeIntervals) {
+            if ((timeInterval.getStart().isEqual(start) || timeInterval.getStart().isAfter(start)) &&
+                    (timeInterval.getStart().plusMinutes(15).isEqual(end) || timeInterval.getStart().plusMinutes(15).isBefore(end))) {
+                timeInterval.setAvailable(true);
+            }
+        }
+    }
+
     public static List<TimeInterval> buildTimeIntervalList(LocalDate date) {
         final ArrayList<TimeInterval> timeIntervals = new ArrayList<>();
 
