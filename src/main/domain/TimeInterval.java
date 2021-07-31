@@ -22,7 +22,6 @@ public class TimeInterval {
                 || isInExclusiveRange(otherInterval.getStart(), otherInterval.getEnd(), this.end) ;
     }
 
-
     public static List<TimeInterval> divideIfIntersects(TimeInterval intervalA, TimeInterval intervalB) {
         if (!intervalA.intersects(intervalB)) return new ArrayList<>();
 
