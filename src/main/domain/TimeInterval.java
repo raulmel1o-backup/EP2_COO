@@ -1,13 +1,9 @@
 package main.domain;
 
-import main.infra.exception.DifferentDatesException;
-
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TimeInterval {
 
@@ -15,47 +11,26 @@ public class TimeInterval {
     private LocalDateTime end;
     private boolean available;
 
-    public static boolean isInExclusiveRange(LocalDateTime min, LocalDateTime max, LocalDateTime time){
-        return min.isBefore(time) && max.isAfter(time);
-    }
-
-    public boolean intersects(TimeInterval otherInterval){
-        return isInExclusiveRange(this.start, this.end, otherInterval.getStart())
-                || isInExclusiveRange(this.start, this.end, otherInterval.getEnd())
-                || isInExclusiveRange(otherInterval.getStart(), otherInterval.getEnd(), this.start)
-                || isInExclusiveRange(otherInterval.getStart(), otherInterval.getEnd(), this.end) ;
-    }
-
-    public static List<TimeInterval> divideIfIntersects(TimeInterval intervalA, TimeInterval intervalB) {
-        if (!intervalA.intersects(intervalB)) return new ArrayList<>();
-
-        List<TimeInterval> initialIntervals = List.of(intervalA, intervalB) ;
-
-        List<LocalDateTime> sortedDateTimes = initialIntervals
-                .stream()
-                .map(interval -> List.of(interval.getStart(), interval.getEnd()))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-
-        List<TimeInterval> dividedIntervals = new ArrayList<>();
-        int i = 1;
-        for (int interval = 1 ; interval <= 2; interval++) {
-            for (i = i - 1; i / 2 < interval ; i++) {
-                LocalDateTime start = sortedDateTimes.get(i);
-                LocalDateTime end   = sortedDateTimes.get(i + 1);
-                if (!start.equals(end)) dividedIntervals.add(new TimeInterval(start, end));
+    public static void addAvailability(LocalDateTime start, LocalDateTime end, List<TimeInterval> timeIntervals) {
+        for (TimeInterval timeInterval : timeIntervals) {
+            if ((timeInterval.getStart().isEqual(start) || timeInterval.getStart().isAfter(start)) &&
+                    (timeInterval.getStart().plusMinutes(15).isEqual(end) || timeInterval.getStart().plusMinutes(15).isBefore(end))) {
+                timeInterval.setAvailable(true);
             }
         }
-        return dividedIntervals;
     }
 
-    public void addInterval(LocalDateTime start, LocalDateTime end) {
-        if (start.isBefore(this.start)) this.start = start;
-        if (end.isAfter(this.end)) this.end = end;
-    }
+    public static List<TimeInterval> buildTimeIntervalList(LocalDate date) {
+        final ArrayList<TimeInterval> timeIntervals = new ArrayList<>();
 
-    public boolean isWithin(LocalDateTime start, LocalDateTime end) {
-        return !(start.isAfter(this.end) || end.isBefore(this.start));
+        for (int i = 0; i < 96; i++) {
+            LocalDateTime time = LocalDateTime.of(date, LocalTime.MIDNIGHT).plusMinutes(i * 15);
+            TimeInterval interval = new TimeInterval(time, time.plusMinutes(15));
+
+            timeIntervals.add(interval);
+        }
+
+        return timeIntervals;
     }
 
     public LocalDateTime getStart() {
@@ -70,40 +45,19 @@ public class TimeInterval {
         return available;
     }
 
-    public void setEnd(LocalDateTime end) {
-        this.end = end;
-    }
-
     public void setStart(LocalDateTime start) {
         this.start = start;
+    }
+
+    public void setEnd(LocalDateTime end) {
+        this.end = end;
     }
 
     public void setAvailable(boolean available) {
         this.available = available;
     }
 
-    public static List<TimeInterval> buildTimeIntervalList(LocalDate date) {
-        final ArrayList<TimeInterval> timeIntervals = new ArrayList<>();
-
-        for (int i = 0; i < 96; i++) {
-            LocalDateTime time = LocalDateTime.of(date, LocalTime.MIDNIGHT).plusMinutes(i * 15);
-            TimeInterval interval = new TimeInterval(time);
-
-            timeIntervals.add(interval);
-        }
-
-        return timeIntervals;
-    }
-
-    public TimeInterval(LocalDateTime start) {
-        this.start = start;
-        this.available = false;
-    }
-
     public TimeInterval(LocalDateTime start, LocalDateTime end) {
-        if (!start.toLocalDate().isEqual(end.toLocalDate()))
-            throw new DifferentDatesException(start.toLocalDate() + " is not equals to " + end.toLocalDate());
-
         this.start = start;
         this.end = end;
         this.available = false;
