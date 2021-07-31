@@ -1,6 +1,6 @@
-package domain;
+package main.domain;
 
-import infra.exception.DifferentDatesException;
+import main.infra.exception.DifferentDatesException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -24,12 +24,11 @@ public class TimeInterval {
 
 
     public static List<TimeInterval> divideIfIntersects(TimeInterval intervalA, TimeInterval intervalB) {
-        if(!intervalA.intersects(intervalB)) return new ArrayList<>();
+        if (!intervalA.intersects(intervalB)) return new ArrayList<>();
 
         List<TimeInterval> initialIntervals = List.of(intervalA, intervalB) ;
 
-        List<LocalDateTime> sortedDatetimes =
-                initialIntervals
+        List<LocalDateTime> sortedDateTimes = initialIntervals
                 .stream()
                 .map(interval -> List.of(interval.getStart(), interval.getEnd()))
                 .flatMap(Collection::stream)
@@ -37,10 +36,10 @@ public class TimeInterval {
 
         List<TimeInterval> dividedIntervals = new ArrayList<>();
         int i = 1;
-        for(int interval = 1 ; interval <= 2; interval++) {
-            for(i = i - 1; i / 2 < interval ; i++) {
-                LocalDateTime start = sortedDatetimes.get(i);
-                LocalDateTime end   = sortedDatetimes.get(i+1);
+        for (int interval = 1 ; interval <= 2; interval++) {
+            for (i = i - 1; i / 2 < interval ; i++) {
+                LocalDateTime start = sortedDateTimes.get(i);
+                LocalDateTime end   = sortedDateTimes.get(i + 1);
                 if (!start.equals(end)) dividedIntervals.add(new TimeInterval(start, end));
             }
         }

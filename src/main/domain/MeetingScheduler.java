@@ -1,11 +1,10 @@
-package domain;
+package main.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 public class MeetingScheduler {
 
@@ -25,8 +24,11 @@ public class MeetingScheduler {
         guest.addAvailability(start, end);
     }
 
+    public void showOverlapping() {}
+
     private List<LocalDate> getSortedOverlappingDates() {
         ListIterator<Guest> guests = guestsList.listIterator();
+
         return getOverlappingDates(guests, new ArrayList<>())
                 .stream()
                 .sorted()
@@ -34,18 +36,17 @@ public class MeetingScheduler {
     }
 
     private List<LocalDate> getOverlappingDates(ListIterator<Guest> guests, List<LocalDate> overlappingDates) {
-        if(!guests.hasNext()) return overlappingDates;
-        if(overlappingDates == null) throw new NullPointerException("List of overlapping dates is null");
+        if (!guests.hasNext()) return overlappingDates;
+        if (overlappingDates == null) throw new NullPointerException("List of overlapping dates is null");
+
         Guest g = guests.next();
         List<LocalDate> guestAvailability = new ArrayList<>(g.getAvailability().keySet());
         List<LocalDate> newOverlapping = overlappingDates
                 .stream()
                 .filter(guestAvailability::contains)
                 .collect(toList());
-        return getOverlappingDates(guests, newOverlapping);
-    }
 
-    public void showOverlapping() {
+        return getOverlappingDates(guests, newOverlapping);
     }
 
     public LocalDate getStart() {

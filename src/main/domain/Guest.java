@@ -1,6 +1,6 @@
-package domain;
+package main.domain;
 
-import infra.exception.DifferentDatesException;
+import main.infra.exception.DifferentDatesException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

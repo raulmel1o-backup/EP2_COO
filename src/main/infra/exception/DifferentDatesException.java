@@ -1,4 +1,4 @@
-package infra.exception;
+package main.infra.exception;
 
 public class DifferentDatesException extends RuntimeException {
     public DifferentDatesException(final String message) {
