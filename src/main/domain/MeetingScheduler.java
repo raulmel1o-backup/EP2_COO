@@ -20,11 +20,17 @@ public class MeetingScheduler {
     }
 
     public void designateAvailability(String guestEmail, LocalDateTime start, LocalDateTime end) {
+        if (start.toLocalDate().isBefore(this.start) || end.toLocalDate().isAfter(this.end)) {
+            System.err.println("Invalid dates");
+        }
+
         Guest guest = guestsList.stream().filter(g -> g.getEmail().equals(guestEmail)).collect(toList()).get(0);
         guest.addAvailability(start, end);
     }
 
-    public void showOverlapping() {}
+    public void showOverlapping() {
+
+    }
 
     private List<LocalDate> getSortedOverlappingDates() {
         ListIterator<Guest> guests = guestsList.listIterator();
