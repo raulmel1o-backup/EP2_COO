@@ -9,13 +9,11 @@ import java.util.*;
 public class Guest {
 
     private final String email;
-    private final Map<LocalDate, ArrayList<TimeInterval>> availability;
-    private final Map<LocalDate, List<TimeInterval>> newAvailability;
+    private final Map<LocalDate, List<TimeInterval>> availability;
 
     public Guest(String email) {
         this.email = email;
         this.availability = new HashMap<>();
-        this.newAvailability = new HashMap<>();
     }
 
     public void addAvailability(LocalDateTime start, LocalDateTime end) {
@@ -24,18 +22,15 @@ public class Guest {
 
         final LocalDate date = start.toLocalDate();
 
-        if (newAvailability.containsKey(date)) {
-            List<TimeInterval> timeIntervals = newAvailability.get(date);
+        if (!availability.containsKey(date)) availability.put(date, TimeInterval.buildTimeIntervalList(date));
 
-            for (TimeInterval timeInterval : timeIntervals) {
-                if ((timeInterval.getStart().isEqual(start) || timeInterval.getStart().isAfter(start)) &&
-                        (timeInterval.getStart().plusMinutes(15).isEqual(end) || timeInterval.getStart().plusMinutes(15).isBefore(end))) {
-                    timeInterval.setAvailable(true);
-                }
+        List<TimeInterval> timeIntervals = availability.get(date);
+
+        for (TimeInterval timeInterval : timeIntervals) {
+            if ((timeInterval.getStart().isEqual(start) || timeInterval.getStart().isAfter(start)) &&
+                    (timeInterval.getStart().plusMinutes(15).isEqual(end) || timeInterval.getStart().plusMinutes(15).isBefore(end))) {
+                timeInterval.setAvailable(true);
             }
-
-        } else {
-            newAvailability.put(date, TimeInterval.buildTimeIntervalList(date));
         }
     }
 
@@ -43,8 +38,7 @@ public class Guest {
         return email;
     }
 
-
-    public Map<LocalDate, ArrayList<TimeInterval>> getAvailability() {
+    public Map<LocalDate, List<TimeInterval>> getAvailability() {
         return availability;
     }
 }
