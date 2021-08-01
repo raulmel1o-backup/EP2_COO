@@ -1,8 +1,6 @@
 package main.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Reserva {
     private final LocalDateTime inicio, fim;

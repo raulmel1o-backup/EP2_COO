@@ -67,7 +67,16 @@ public class GerenciadorDeSalas {
         catch(NullPointerException e){
             System.out.println(e.getMessage());
         }
+    }
 
+    public void removeSalaChamada(String nomeDaSala) throws RoomNotFoundException{
+        Sala sala = getSala(nomeDaSala).orElseThrow(new RoomNotFoundException(nomeDaSala));
+        List<Reserva> reservasDeletar = reservasPorSala.get(salasPorNome.get(nomeDaSala));
+        if(reservasDeletar == null) return;
+        for (Reserva reserva : reservasDeletar) {
+            cancelaReserva(reserva);
+        }
+        salasPorNome.remove(nomeDaSala);
     }
 
     public void imprimeReservasPraSala(String nomeSala) throws RoomNotFoundException{
