@@ -3,6 +3,7 @@ package main.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class TimeInterval {
@@ -10,6 +11,7 @@ public class TimeInterval {
     private LocalDateTime start;
     private LocalDateTime end;
     private boolean available;
+
 
     public static void addAvailability(LocalDateTime start, LocalDateTime end, List<TimeInterval> timeIntervals) {
         for (TimeInterval timeInterval : timeIntervals) {
@@ -31,6 +33,18 @@ public class TimeInterval {
         }
 
         return timeIntervals;
+    }
+
+    public static List<LocalDate> getDatesBetween(LocalDateTime localDateTime1Inclusive,
+                                           LocalDateTime localDateTime2Inclusive)
+    {
+        if(localDateTime1Inclusive.isBefore(localDateTime2Inclusive))
+            getDatesBetween(localDateTime2Inclusive, localDateTime1Inclusive);
+        List<LocalDate> dates = new ArrayList<>();
+        LocalDate start = localDateTime1Inclusive.toLocalDate();
+        int days = (int) ChronoUnit.DAYS.between(localDateTime1Inclusive, localDateTime2Inclusive.plusDays(1));
+        for(int numDays = 0; numDays < days; numDays++) dates.add(start.plusDays(numDays));
+        return dates;
     }
 
     public LocalDateTime getStart() {
