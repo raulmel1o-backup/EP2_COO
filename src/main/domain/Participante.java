@@ -6,12 +6,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Convidado {
+public class Participante {
 
     private final String email;
     private final Map<LocalDate, List<IntervaloTempo>> availability;
 
-    public Convidado(String email) {
+    public Participante(String email) {
         this.email = email;
         this.availability = new HashMap<>();
     }

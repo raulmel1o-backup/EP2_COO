@@ -7,34 +7,34 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
-public class MeetingScheduler {
+public class MarcadorDeReuniao {
 
     private LocalDate start;
     private LocalDate end;
-    private final List<Convidado> guestsList;
+    private final List<Participante> guestsList;
 
-    public void scheduleMeetingBetween(LocalDate start, LocalDate end, Collection<String> guestsList) {
-        this.start = start;
-        this.end = end;
+    public void marcarReuniaoEntre(LocalDate dataInicial, LocalDate dataFinal, Collection<String> listaDeParticipantes) {
+        this.start = dataInicial;
+        this.end = dataFinal;
 
-        guestsList.forEach(email -> this.guestsList.add(new Convidado(email)));
+        listaDeParticipantes.forEach(email -> this.guestsList.add(new Participante(email)));
     }
 
-    public void designateAvailability(String guestEmail, LocalDateTime start, LocalDateTime end) {
-        if (start.toLocalDate().isBefore(this.start) || end.toLocalDate().isAfter(this.end)) {
+    public void indicaDisponibilidade(String participante, LocalDateTime inicio, LocalDateTime fim) {
+        if (inicio.toLocalDate().isBefore(this.start) || fim.toLocalDate().isAfter(this.end)) {
             System.err.println("Invalid dates");
         }
 
-        Convidado convidado = guestsList.stream().filter(g -> g.getEmail().equals(guestEmail)).collect(toList()).get(0);
-        convidado.addAvailability(start, end);
+        Participante convidado = guestsList.stream().filter(g -> g.getEmail().equals(participante)).collect(toList()).get(0);
+        convidado.addAvailability(inicio, fim);
     }
   
-    public void showOverlapping() {
-        final Map<LocalDate, Map<LocalDateTime, List<Convidado>>> map = new LinkedHashMap<>();
+    public void mostraSobreposicao() {
+        final Map<LocalDate, Map<LocalDateTime, List<Participante>>> map = new LinkedHashMap<>();
         LocalDate day = start;
 
         while (!day.isAfter(end)) {
-            final HashMap<LocalDateTime, List<Convidado>> mapToAdd = new LinkedHashMap<>();
+            final HashMap<LocalDateTime, List<Participante>> mapToAdd = new LinkedHashMap<>();
 
             for (int i = 0; i < 96; i++) {
                 mapToAdd.put(LocalDateTime.of(day, LocalTime.MIDNIGHT.plusMinutes(i * 15)), new ArrayList<>());
@@ -44,13 +44,13 @@ public class MeetingScheduler {
             day = day.plusDays(1);
         }
 
-        for (Convidado convidado : guestsList) {
-            final Set<LocalDate> keys = convidado.getAvailability().keySet();
+        for (Participante participante : guestsList) {
+            final Set<LocalDate> keys = participante.getAvailability().keySet();
 
             for (LocalDate key : keys) {
-                convidado.getAvailability().get(key).forEach(timeInterval -> {
-                    if (timeInterval.isAvailable()) {
-                        map.get(timeInterval.getStart().toLocalDate()).get(timeInterval.getStart()).add(convidado);
+                participante.getAvailability().get(key).forEach(timeInterval -> {
+                    if (timeInterval.isDisponivel()) {
+                        map.get(timeInterval.getInicio().toLocalDate()).get(timeInterval.getInicio()).add(participante);
                     }
                 });
             }
@@ -60,7 +60,7 @@ public class MeetingScheduler {
     }
 
     private List<LocalDate> getSortedOverlappingDates() {
-        ListIterator<Convidado> guests = guestsList.listIterator();
+        ListIterator<Participante> guests = guestsList.listIterator();
 
         return getOverlappingDates(guests, new ArrayList<>())
                 .stream()
@@ -68,11 +68,11 @@ public class MeetingScheduler {
                 .collect(toList());
     }
 
-    private List<LocalDate> getOverlappingDates(ListIterator<Convidado> guests, List<LocalDate> overlappingDates) {
+    private List<LocalDate> getOverlappingDates(ListIterator<Participante> guests, List<LocalDate> overlappingDates) {
         if (!guests.hasNext()) return overlappingDates;
         if (overlappingDates == null) throw new NullPointerException("List of overlapping dates is null");
 
-        Convidado g = guests.next();
+        Participante g = guests.next();
         List<LocalDate> guestAvailability = new ArrayList<>(g.getAvailability().keySet());
         List<LocalDate> newOverlapping = overlappingDates
                 .stream()
@@ -90,11 +90,11 @@ public class MeetingScheduler {
         return end;
     }
 
-    public List<Convidado> getGuestsList() {
+    public List<Participante> getGuestsList() {
         return guestsList;
     }
 
-    public MeetingScheduler() {
+    public MarcadorDeReuniao() {
         this.guestsList = new ArrayList<>();
     }
 }

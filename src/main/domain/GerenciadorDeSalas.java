@@ -4,10 +4,8 @@ import main.infra.exception.DifferentDatesException;
 import main.infra.exception.RoomAlreadyReservedException;
 import main.infra.exception.RoomNotFoundException;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GerenciadorDeSalas {
     private final List<Sala> salas;

@@ -1,7 +1,7 @@
 package main;
 
 import main.domain.GerenciadorDeSalas;
-import main.domain.MeetingScheduler;
+import main.domain.MarcadorDeReuniao;
 import main.domain.Reserva;
 import main.infra.exception.BookingNotFoundException;
 import main.infra.exception.RoomAlreadyReservedException;
@@ -19,7 +19,7 @@ import java.util.Scanner;
 public class Application {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private static final MeetingScheduler meetingScheduler = new MeetingScheduler();
+    private static final MarcadorDeReuniao MARCADOR_DE_REUNIAO = new MarcadorDeReuniao();
     private static final GerenciadorDeSalas gerenciadorDeSalas = new GerenciadorDeSalas();
 
     private static final List<Reserva> reservas = new LinkedList<>();
@@ -76,7 +76,7 @@ public class Application {
         final String guestsStr = scanner.nextLine();
 
         try {
-            meetingScheduler.scheduleMeetingBetween(LocalDate.parse(startStr),
+            MARCADOR_DE_REUNIAO.marcarReuniaoEntre(LocalDate.parse(startStr),
                     LocalDate.parse(endStr), Arrays.asList(guestsStr.split(";")));
         } catch (DateTimeParseException exception) {
             System.err.println("Insira as datas no formato indicado");
@@ -96,7 +96,7 @@ public class Application {
         final String endStr = scanner.nextLine();
 
         try {
-            meetingScheduler.designateAvailability(emailStr,
+            MARCADOR_DE_REUNIAO.indicaDisponibilidade(emailStr,
                     LocalDateTime.parse(startStr, formatter), LocalDateTime.parse(endStr, formatter));
         } catch (DateTimeParseException exception) {
             System.err.println("Insira as datas no formato indicado");
@@ -104,7 +104,7 @@ public class Application {
     }
 
     private static void handlePrintingOverlap() {
-        meetingScheduler.showOverlapping();
+        MARCADOR_DE_REUNIAO.mostraSobreposicao();
     }
 
     private static void handleAddingRoom(final Scanner scanner) {

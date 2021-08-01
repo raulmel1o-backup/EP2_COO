@@ -14,17 +14,17 @@ public class Printer {
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_YELLOW = "\u001B[33m";
 
-    public static void print(LocalDate start, LocalDate end, List<Convidado> convidados, Map<LocalDate, Map<LocalDateTime, List<Convidado>>> availability) {
+    public static void print(LocalDate start, LocalDate end, List<Participante> participantes, Map<LocalDate, Map<LocalDateTime, List<Participante>>> availability) {
         System.out.println("\t\tQUADRO DE DISPONIBILIDADES\n");
         printHeaders(start, end);
-        printDisponibilidade(start, convidados, availability);
+        printDisponibilidade(start, participantes, availability);
     }
 
     private static void printHeaders(LocalDate start, LocalDate end) {
         System.out.println(buildHeaders(start, end));
     }
 
-    private static void printDisponibilidade(LocalDate start, List<Convidado> convidados, Map<LocalDate, Map<LocalDateTime, List<Convidado>>> availability) {
+    private static void printDisponibilidade(LocalDate start, List<Participante> participantes, Map<LocalDate, Map<LocalDateTime, List<Participante>>> availability) {
         if (availability.isEmpty()) {
             System.out.println("Nenhum horário registrado");
             return;
@@ -40,9 +40,9 @@ public class Printer {
             for (LocalDate dateKey : dateKeys) {
                 if (availability.get(dateKey).get(LocalDateTime.of(dateKey, dateTimeKey.toLocalTime())).size() == 0) {
                     System.out.print("     " + ANSI_RED + availability.get(dateKey).get(LocalDateTime.of(dateKey, dateTimeKey.toLocalTime())).size() + ANSI_RESET + "      |");
-                } else if (availability.get(dateKey).get(LocalDateTime.of(dateKey, dateTimeKey.toLocalTime())).size() < convidados.size()) {
+                } else if (availability.get(dateKey).get(LocalDateTime.of(dateKey, dateTimeKey.toLocalTime())).size() < participantes.size()) {
                     System.out.print("     " + ANSI_YELLOW + availability.get(dateKey).get(LocalDateTime.of(dateKey, dateTimeKey.toLocalTime())).size() + ANSI_RESET + "      |");
-                } else if (availability.get(dateKey).get(LocalDateTime.of(dateKey, dateTimeKey.toLocalTime())).size() == convidados.size()) {
+                } else if (availability.get(dateKey).get(LocalDateTime.of(dateKey, dateTimeKey.toLocalTime())).size() == participantes.size()) {
                     optimalDateTimes.add(LocalDateTime.of(dateKey, dateTimeKey.toLocalTime()));
                     System.out.print("     " + ANSI_GREEN + availability.get(dateKey).get(LocalDateTime.of(dateKey, dateTimeKey.toLocalTime())).size() + ANSI_RESET + "      |");
                 }

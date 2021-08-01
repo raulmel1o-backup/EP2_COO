@@ -9,24 +9,24 @@ import java.util.stream.Collectors;
 
 public class IntervaloTempo {
 
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private boolean available;
+    private LocalDateTime inicio;
+    private LocalDateTime fim;
+    private boolean disponivel;
 
-    public static void adicionaDisponibilidade(LocalDateTime start, LocalDateTime end, List<IntervaloTempo> intervaloTempos) {
+    public static void adicionaDisponibilidade(LocalDateTime inicio, LocalDateTime fim, List<IntervaloTempo> intervaloTempos) {
         for (IntervaloTempo intervaloTempo : intervaloTempos) {
-            if ((intervaloTempo.getStart().isEqual(start) || intervaloTempo.getStart().isAfter(start)) &&
-                    (intervaloTempo.getStart().plusMinutes(15).isEqual(end) || intervaloTempo.getStart().plusMinutes(15).isBefore(end))) {
-                intervaloTempo.setAvailable(true);
+            if ((intervaloTempo.getInicio().isEqual(inicio) || intervaloTempo.getInicio().isAfter(inicio)) &&
+                    (intervaloTempo.getInicio().plusMinutes(15).isEqual(fim) || intervaloTempo.getInicio().plusMinutes(15).isBefore(fim))) {
+                intervaloTempo.setDisponivel(true);
             }
         }
     }
 
-    public static List<IntervaloTempo> buildTimeIntervalList(LocalDate date) {
+    public static List<IntervaloTempo> buildTimeIntervalList(LocalDate data) {
         final ArrayList<IntervaloTempo> intervaloTempos = new ArrayList<>();
 
         for (int i = 0; i < 96; i++) {
-            LocalDateTime time = LocalDateTime.of(date, LocalTime.MIDNIGHT).plusMinutes(i * 15);
+            LocalDateTime time = LocalDateTime.of(data, LocalTime.MIDNIGHT).plusMinutes(i * 15);
             IntervaloTempo interval = new IntervaloTempo(time, time.plusMinutes(15));
 
             intervaloTempos.add(interval);
@@ -35,17 +35,8 @@ public class IntervaloTempo {
         return intervaloTempos;
     }
 
-    public static List<IntervaloTempo> listAllAvailableIntervals(LocalDateTime start, LocalDateTime end){
-        List<IntervaloTempo> intervalsOnDay = IntervaloTempo.buildTimeIntervalList(start.toLocalDate());
-        IntervaloTempo.adicionaDisponibilidade(start, end, intervalsOnDay);
-        return intervalsOnDay
-                .stream()
-                .filter(IntervaloTempo::isAvailable)
-                .collect(Collectors.toList());
-    }
-
     public static List<LocalDate> getDatesBetween(LocalDateTime localDateTime1Inclusive,
-                                           LocalDateTime localDateTime2Inclusive)
+                                                  LocalDateTime localDateTime2Inclusive)
     {
         if(localDateTime1Inclusive.isBefore(localDateTime2Inclusive))
             getDatesBetween(localDateTime2Inclusive, localDateTime1Inclusive);
@@ -61,46 +52,46 @@ public class IntervaloTempo {
     }
 
     public boolean intersects(IntervaloTempo otherInterval){
-        return isInRange(this.start, this.end, otherInterval.getStart())
-                || isInRange(this.start, this.end, otherInterval.getEnd())
-                || isInRange(otherInterval.getStart(), otherInterval.getEnd(), this.start)
-                || isInRange(otherInterval.getStart(), otherInterval.getEnd(), this.end)
+        return isInRange(this.inicio, this.fim, otherInterval.getInicio())
+                || isInRange(this.inicio, this.fim, otherInterval.getFim())
+                || isInRange(otherInterval.getInicio(), otherInterval.getFim(), this.inicio)
+                || isInRange(otherInterval.getInicio(), otherInterval.getFim(), this.fim)
                 || hasSameStartAndEnd(otherInterval);
     }
 
-    public LocalDateTime getStart() {
-        return start;
+    public LocalDateTime getInicio() {
+        return inicio;
     }
 
-    public LocalDateTime getEnd() {
-        return end;
+    public LocalDateTime getFim() {
+        return fim;
     }
 
-    public boolean isAvailable() {
-        return available;
+    public boolean isDisponivel() {
+        return disponivel;
     }
 
-    public void setStart(LocalDateTime start) {
-        this.start = start;
+    public void setInicio(LocalDateTime inicio) {
+        this.inicio = inicio;
     }
 
-    public void setEnd(LocalDateTime end) {
-        this.end = end;
+    public void setFim(LocalDateTime fim) {
+        this.fim = fim;
     }
 
-    public void setAvailable(boolean available) {
-        this.available = available;
+    public void setDisponivel(boolean disponivel) {
+        this.disponivel = disponivel;
     }
 
     public boolean hasSameStartAndEnd(IntervaloTempo a){
-       return a.getStart().equals(this.start)
-               && a.getEnd().equals(this.end);
+       return a.getInicio().equals(this.inicio)
+               && a.getFim().equals(this.fim);
     }
 
-    public IntervaloTempo(LocalDateTime start, LocalDateTime end) {
-        this.start = start;
-        this.end = end;
-        this.available = false;
+    public IntervaloTempo(LocalDateTime inicio, LocalDateTime fim) {
+        this.inicio = inicio;
+        this.fim = fim;
+        this.disponivel = false;
     }
 
 }
