@@ -44,7 +44,7 @@ public class Application {
                     handleAddingRoom(scanner);
                     break;
                 case "remove":
-                    handleRemovingRoom();
+                    handleRemovingRoom(scanner);
                     break;
                 case "reserva":
                     handleBookingRoom(scanner);
@@ -124,7 +124,16 @@ public class Application {
         }
     }
 
-    private static void handleRemovingRoom() {}
+    private static void handleRemovingRoom(final Scanner scanner) {
+        System.out.println("Insira o nome da sala que será removida?");
+        final String nome = scanner.nextLine();
+
+        try {
+            gerenciadorDeSalas.removeSalaChamada(nome);
+        } catch (RoomNotFoundException exception) {
+            System.err.println("Sala não encontrada");
+        }
+    }
 
     private static void handleBookingRoom(final Scanner scanner) {
         System.out.println("Insira o nome da sala que será reservada");
