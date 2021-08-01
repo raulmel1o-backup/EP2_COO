@@ -3,26 +3,35 @@ package main.domain;
 import main.infra.exception.NegativeOrZeroCapacityException;
 
 public class Sala {
-    private String nome = "", local = "", observacoes = "";
-    private int capacidadeMax = 0;
+    private final String nome, local, observacoes;
+    private final int capacidadeMax;
 
     public Sala(String nome, String observacoes, int capacidade){
-        this.nome = nome;
-        this.capacidadeMax = capacidade;
-        this.observacoes = observacoes;
+        this.nome           = nome;
+        this.capacidadeMax  = capacidade;
+        this.observacoes    = observacoes;
+        this.local          = "";
         throwExceptionIfNegativeOrZeroCapacity();
     }
 
     public Sala(String nome, String observacoes, int capacidade, String local){
-        this.nome = nome;
-        this.capacidadeMax = capacidade;
-        this.observacoes = observacoes;
-        this.local = local;
+        this.nome           = nome;
+        this.capacidadeMax  = capacidade;
+        this.observacoes    = observacoes;
+        this.local          = local;
         throwExceptionIfNegativeOrZeroCapacity();
     }
 
     private void throwExceptionIfNegativeOrZeroCapacity() {
         if(capacidadeMax < 0) throw new NegativeOrZeroCapacityException(capacidadeMax);
+    }
+
+    @Override
+    public String toString(){
+        return    "Nome: " + nome + "\n"
+                + "Capacidade Maxima: " + capacidadeMax + "\n"
+                + "Observacoes: " + observacoes + "\n"
+                + "Local: " + local + "\n";
     }
 
     public int getCapacidade() {

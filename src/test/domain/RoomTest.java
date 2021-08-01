@@ -8,6 +8,9 @@ public class RoomTest {
         Should_Create_New_Room_With_Location();
         Should_Create_New_Room_Without_Location();
         Should_Raise_NegativeCapacityException();
+        Should_Confirm_Name_Of_Added_Room();
+        Should_Confirm_Capacity_Of_Added_Room();
+        Should_Confirm_Observation_Of_Added_Room();
     }
 
     public static void Should_Create_New_Room_With_Location(){
@@ -43,5 +46,27 @@ public class RoomTest {
         }
     }
 
+    public static void Should_Confirm_Name_Of_Added_Room(){
+        final String name  = "Recording Studio";
+        final String obs   = "Crazy Room from Virtual Insanity";
+        final int cap      = 1;
+        Sala room = new Sala(name, obs, cap);
+        if(!room.getNome().equals(name)) System.out.println("Name field was changed during creation");
+    }
 
+    public static void Should_Confirm_Observation_Of_Added_Room(){
+        final String name  = "Recording Studio";
+        final String obs   = "Crazy Room from Virtual Insanity";
+        final int cap      = 1;
+        Sala room = new Sala(name, obs, cap);
+        if(!room.getObservacoes().equals(obs)) System.out.println("Observation field was changed during creation");
+    }
+
+    public static void Should_Confirm_Capacity_Of_Added_Room(){
+        final String name  = "Recording Studio";
+        final String obs   = "Crazy Room from Virtual Insanity";
+        final int cap      = 1;
+        Sala room = new Sala(name, obs, cap);
+        if(room.getCapacidade() != cap) System.out.println("Capacity field was changed during creation");
+    }
 }
