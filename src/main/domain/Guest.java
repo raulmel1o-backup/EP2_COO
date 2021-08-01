@@ -18,7 +18,7 @@ public class Guest {
 
     public void addAvailability(LocalDateTime start, LocalDateTime end) {
         if (!start.toLocalDate().isEqual(end.toLocalDate()))
-            throw new DifferentDatesException(start.toLocalDate() + " is not equal to " + end.toLocalDate());
+            throw new DifferentDatesException(start.toLocalDate(), end.toLocalDate());
 
         final LocalDate date = start.toLocalDate();
 
