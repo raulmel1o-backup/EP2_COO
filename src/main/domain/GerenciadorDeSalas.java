@@ -32,6 +32,7 @@ public class GerenciadorDeSalas {
         ) salas.add(nova);
     }
 
+
     public Reserva reservaSalaChamada(String nomeDaSala, LocalDateTime inicio, LocalDateTime fim)
             throws RoomNotFoundException, DifferentDatesException, RoomAlreadyReservedException
     {
@@ -73,10 +74,12 @@ public class GerenciadorDeSalas {
         Sala sala = getSala(nomeSala).orElseThrow(new RoomNotFoundException(nomeSala));
         if(reservasPraSala(sala) == null) return;
         reservasPraSala(nomeSala).forEach(System.out::println);
+
     }
 
     public Collection<Reserva> reservasPraSala(Sala sala){
         return reservasPorSala.get(sala);
+
     }
 
     public Collection<Reserva> reservasPraSala(String nomeSala){

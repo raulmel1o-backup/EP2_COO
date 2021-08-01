@@ -2,6 +2,7 @@ package main.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -29,7 +30,33 @@ public class MeetingScheduler {
     }
   
     public void showOverlapping() {
+        final Map<LocalDate, Map<LocalDateTime, List<Guest>>> map = new LinkedHashMap<>();
+        LocalDate day = start;
 
+        while (!day.isAfter(end)) {
+            final HashMap<LocalDateTime, List<Guest>> mapToAdd = new LinkedHashMap<>();
+
+            for (int i = 0; i < 96; i++) {
+                mapToAdd.put(LocalDateTime.of(day, LocalTime.MIDNIGHT.plusMinutes(i * 15)), new ArrayList<>());
+            }
+
+            map.put(day, mapToAdd);
+            day = day.plusDays(1);
+        }
+
+        for (Guest guest : guestsList) {
+            final Set<LocalDate> keys = guest.getAvailability().keySet();
+
+            for (LocalDate key : keys) {
+                guest.getAvailability().get(key).forEach(timeInterval -> {
+                    if (timeInterval.isAvailable()) {
+                        map.get(timeInterval.getStart().toLocalDate()).get(timeInterval.getStart()).add(guest);
+                    }
+                });
+            }
+        }
+
+        Printer.print(start, end, guestsList, map);
     }
 
     private List<LocalDate> getSortedOverlappingDates() {

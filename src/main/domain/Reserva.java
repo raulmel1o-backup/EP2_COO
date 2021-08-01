@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Reserva {
     private final LocalDateTime inicio, fim;
+
     private final Sala sala;
 
     public Reserva(Sala sala, LocalDateTime inicio, LocalDateTime fim){
