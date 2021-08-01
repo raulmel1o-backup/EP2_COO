@@ -1,6 +1,7 @@
 package test.domain;
 
 import main.domain.GerenciadorDeSalas;
+import main.domain.Reserva;
 import main.domain.Sala;
 import main.infra.exception.DifferentDatesException;
 import main.infra.exception.RoomAlreadyReservedException;
@@ -12,9 +13,11 @@ import java.util.Optional;
 public class RoomManagerTest {
     public static void main(String[] args) {
         Should_Add_Room();
-        Should_Raise_RoomAlreasyReservedException();
+        Should_Raise_RoomAlreadyReservedException();
         Should_Raise_RoomNotFoundException();
         Should_Raise_DifferentDaysException();
+        Should_Print_Reservations();
+        Should_Remove_Reservation();
     }
 
     private static void Should_Add_Room(){
@@ -43,7 +46,7 @@ public class RoomManagerTest {
         }
     }
 
-    private static void Should_Raise_RoomAlreasyReservedException(){
+    private static void Should_Raise_RoomAlreadyReservedException(){
         GerenciadorDeSalas manager = roomManagerBuilder();
         LocalDateTime now = LocalDateTime.now();
         System.out.println("==============Should_Raise_RoomAlreasyReservedException==================");
@@ -55,12 +58,10 @@ public class RoomManagerTest {
             System.out.println("Third Try");
             manager.reservaSalaChamada("redrum", now, now.plusMinutes(20));
         }
-        catch (RoomNotFoundException notFoundException){
+        catch (RoomNotFoundException | DifferentDatesException ignored){
         }
         catch (RoomAlreadyReservedException reservedException){
             System.out.println(reservedException.getMessage());
-        }
-        catch (DifferentDatesException diffDatesException){
         }
     }
 
@@ -79,9 +80,7 @@ public class RoomManagerTest {
         catch (RoomNotFoundException notFoundException){
             System.out.println(notFoundException.getMessage());
         }
-        catch (RoomAlreadyReservedException reservedException){
-        }
-        catch (DifferentDatesException diffDatesException){
+        catch (RoomAlreadyReservedException | DifferentDatesException ignored){
         }
     }
 
@@ -97,15 +96,47 @@ public class RoomManagerTest {
             System.out.println("Third Try");
             manager.reservaSalaChamada("redrum", now.plusDays(1), now.plusMinutes(20));
         }
-        catch (RoomNotFoundException notFoundException){
-        }
-        catch (RoomAlreadyReservedException reservedException){
-        }
-        catch (DifferentDatesException diffDatesException){
+        catch (RoomNotFoundException | RoomAlreadyReservedException ignored){
+        } catch (DifferentDatesException diffDatesException){
             System.out.println(diffDatesException.getMessage());
         }
     }
 
+    private static void Should_Print_Reservations(){
+       System.out.println("==============Should_Print_Reservations==================");
+       GerenciadorDeSalas g = roomManagerBuilder();
+       try {
+           g.reservaSalaChamada("redrum", LocalDateTime.now(), LocalDateTime.now().plusMinutes(15));
+           g.imprimeReservasPraSala("redrum");
+       }
+       catch (RoomNotFoundException exc){
+           System.out.println("wasn't able to find room");
+       }
+       catch (RoomAlreadyReservedException exc) {
+           System.out.println("Room should not be reserved since it was added only once");
+       }
+    }
+
+    private static void Should_Remove_Reservation(){
+        System.out.println("==============Should_Remove_Reservation==================");
+        GerenciadorDeSalas g = roomManagerBuilder();
+        try {
+            Reserva r = g.reservaSalaChamada("redrum",
+                    LocalDateTime.now(),
+                    LocalDateTime.now().plusMinutes(15));
+            g.reservaSalaChamada("redrum",
+                    LocalDateTime.now().plusMinutes(15),
+                    LocalDateTime.now().plusMinutes(30));
+            g.cancelaReserva(r);
+            if(g.getReserva(r).isPresent() || g.reservasPraSala("redrum").contains(r)) System.out.println("Reservation was not removed.");
+        }
+        catch (RoomNotFoundException exc){
+            System.out.println("Wasn't able to find room");
+        }
+        catch (RoomAlreadyReservedException exc) {
+            System.out.println("Room should not be reserved since it was added only once");
+        }
+    }
     private static GerenciadorDeSalas roomManagerBuilder(){
         GerenciadorDeSalas g = new GerenciadorDeSalas();
         String nome = "redrum", desc = "Here's Johnny!";
