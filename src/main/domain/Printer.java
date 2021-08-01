@@ -17,14 +17,14 @@ public class Printer {
     public static void print(LocalDate start, LocalDate end, List<Guest> guests, Map<LocalDate, Map<LocalDateTime, List<Guest>>> availability) {
         System.out.println("\t\tQUADRO DE DISPONIBILIDADES\n");
         printHeaders(start, end);
-        printAvailability(start, end, guests, availability);
+        printAvailability(start, guests, availability);
     }
 
     private static void printHeaders(LocalDate start, LocalDate end) {
         System.out.println(buildHeaders(start, end));
     }
 
-    private static void printAvailability(LocalDate start, LocalDate end, List<Guest> guests, Map<LocalDate, Map<LocalDateTime, List<Guest>>> availability) {
+    private static void printAvailability(LocalDate start, List<Guest> guests, Map<LocalDate, Map<LocalDateTime, List<Guest>>> availability) {
         if (availability.isEmpty()) {
             System.out.println("Nenhum horário registrado");
             return;
@@ -66,7 +66,7 @@ public class Printer {
         LocalDate day = start;
 
         while (!day.isAfter(end)) {
-            headers.append(" " + day + " |");
+            headers.append(" ").append(day).append(" |");
             day = day.plusDays(1);
         }
 
