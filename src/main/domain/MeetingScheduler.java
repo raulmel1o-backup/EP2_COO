@@ -11,13 +11,13 @@ public class MeetingScheduler {
 
     private LocalDate start;
     private LocalDate end;
-    private final List<Guest> guestsList;
+    private final List<Convidado> guestsList;
 
     public void scheduleMeetingBetween(LocalDate start, LocalDate end, Collection<String> guestsList) {
         this.start = start;
         this.end = end;
 
-        guestsList.forEach(email -> this.guestsList.add(new Guest(email)));
+        guestsList.forEach(email -> this.guestsList.add(new Convidado(email)));
     }
 
     public void designateAvailability(String guestEmail, LocalDateTime start, LocalDateTime end) {
@@ -25,16 +25,16 @@ public class MeetingScheduler {
             System.err.println("Invalid dates");
         }
 
-        Guest guest = guestsList.stream().filter(g -> g.getEmail().equals(guestEmail)).collect(toList()).get(0);
-        guest.addAvailability(start, end);
+        Convidado convidado = guestsList.stream().filter(g -> g.getEmail().equals(guestEmail)).collect(toList()).get(0);
+        convidado.addAvailability(start, end);
     }
   
     public void showOverlapping() {
-        final Map<LocalDate, Map<LocalDateTime, List<Guest>>> map = new LinkedHashMap<>();
+        final Map<LocalDate, Map<LocalDateTime, List<Convidado>>> map = new LinkedHashMap<>();
         LocalDate day = start;
 
         while (!day.isAfter(end)) {
-            final HashMap<LocalDateTime, List<Guest>> mapToAdd = new LinkedHashMap<>();
+            final HashMap<LocalDateTime, List<Convidado>> mapToAdd = new LinkedHashMap<>();
 
             for (int i = 0; i < 96; i++) {
                 mapToAdd.put(LocalDateTime.of(day, LocalTime.MIDNIGHT.plusMinutes(i * 15)), new ArrayList<>());
@@ -44,13 +44,13 @@ public class MeetingScheduler {
             day = day.plusDays(1);
         }
 
-        for (Guest guest : guestsList) {
-            final Set<LocalDate> keys = guest.getAvailability().keySet();
+        for (Convidado convidado : guestsList) {
+            final Set<LocalDate> keys = convidado.getAvailability().keySet();
 
             for (LocalDate key : keys) {
-                guest.getAvailability().get(key).forEach(timeInterval -> {
+                convidado.getAvailability().get(key).forEach(timeInterval -> {
                     if (timeInterval.isAvailable()) {
-                        map.get(timeInterval.getStart().toLocalDate()).get(timeInterval.getStart()).add(guest);
+                        map.get(timeInterval.getStart().toLocalDate()).get(timeInterval.getStart()).add(convidado);
                     }
                 });
             }
@@ -60,7 +60,7 @@ public class MeetingScheduler {
     }
 
     private List<LocalDate> getSortedOverlappingDates() {
-        ListIterator<Guest> guests = guestsList.listIterator();
+        ListIterator<Convidado> guests = guestsList.listIterator();
 
         return getOverlappingDates(guests, new ArrayList<>())
                 .stream()
@@ -68,11 +68,11 @@ public class MeetingScheduler {
                 .collect(toList());
     }
 
-    private List<LocalDate> getOverlappingDates(ListIterator<Guest> guests, List<LocalDate> overlappingDates) {
+    private List<LocalDate> getOverlappingDates(ListIterator<Convidado> guests, List<LocalDate> overlappingDates) {
         if (!guests.hasNext()) return overlappingDates;
         if (overlappingDates == null) throw new NullPointerException("List of overlapping dates is null");
 
-        Guest g = guests.next();
+        Convidado g = guests.next();
         List<LocalDate> guestAvailability = new ArrayList<>(g.getAvailability().keySet());
         List<LocalDate> newOverlapping = overlappingDates
                 .stream()
@@ -90,7 +90,7 @@ public class MeetingScheduler {
         return end;
     }
 
-    public List<Guest> getGuestsList() {
+    public List<Convidado> getGuestsList() {
         return guestsList;
     }
 

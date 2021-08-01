@@ -6,12 +6,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Guest {
+public class Convidado {
 
     private final String email;
-    private final Map<LocalDate, List<TimeInterval>> availability;
+    private final Map<LocalDate, List<IntervaloTempo>> availability;
 
-    public Guest(String email) {
+    public Convidado(String email) {
         this.email = email;
         this.availability = new HashMap<>();
     }
@@ -22,17 +22,17 @@ public class Guest {
 
         final LocalDate date = start.toLocalDate();
 
-        if (!availability.containsKey(date)) availability.put(date, TimeInterval.buildTimeIntervalList(date));
+        if (!availability.containsKey(date)) availability.put(date, IntervaloTempo.buildTimeIntervalList(date));
 
-        List<TimeInterval> timeIntervals = availability.get(date);
-        TimeInterval.addAvailability(start, end, timeIntervals);
+        final List<IntervaloTempo> intervaloTempos = availability.get(date);
+        IntervaloTempo.adicionaDisponibilidade(start, end, intervaloTempos);
     }
 
     public String getEmail() {
         return email;
     }
 
-    public Map<LocalDate, List<TimeInterval>> getAvailability() {
+    public Map<LocalDate, List<IntervaloTempo>> getAvailability() {
         return availability;
     }
 }

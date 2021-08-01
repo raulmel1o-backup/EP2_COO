@@ -7,41 +7,40 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TimeInterval {
+public class IntervaloTempo {
 
     private LocalDateTime start;
     private LocalDateTime end;
     private boolean available;
 
-
-    public static void addAvailability(LocalDateTime start, LocalDateTime end, List<TimeInterval> timeIntervals) {
-        for (TimeInterval timeInterval : timeIntervals) {
-            if ((timeInterval.getStart().isEqual(start) || timeInterval.getStart().isAfter(start)) &&
-                    (timeInterval.getStart().plusMinutes(15).isEqual(end) || timeInterval.getStart().plusMinutes(15).isBefore(end))) {
-                timeInterval.setAvailable(true);
+    public static void adicionaDisponibilidade(LocalDateTime start, LocalDateTime end, List<IntervaloTempo> intervaloTempos) {
+        for (IntervaloTempo intervaloTempo : intervaloTempos) {
+            if ((intervaloTempo.getStart().isEqual(start) || intervaloTempo.getStart().isAfter(start)) &&
+                    (intervaloTempo.getStart().plusMinutes(15).isEqual(end) || intervaloTempo.getStart().plusMinutes(15).isBefore(end))) {
+                intervaloTempo.setAvailable(true);
             }
         }
     }
 
-    public static List<TimeInterval> buildTimeIntervalList(LocalDate date) {
-        final ArrayList<TimeInterval> timeIntervals = new ArrayList<>();
+    public static List<IntervaloTempo> buildTimeIntervalList(LocalDate date) {
+        final ArrayList<IntervaloTempo> intervaloTempos = new ArrayList<>();
 
         for (int i = 0; i < 96; i++) {
             LocalDateTime time = LocalDateTime.of(date, LocalTime.MIDNIGHT).plusMinutes(i * 15);
-            TimeInterval interval = new TimeInterval(time, time.plusMinutes(15));
+            IntervaloTempo interval = new IntervaloTempo(time, time.plusMinutes(15));
 
-            timeIntervals.add(interval);
+            intervaloTempos.add(interval);
         }
 
-        return timeIntervals;
+        return intervaloTempos;
     }
 
-    public static List<TimeInterval> listAllAvailableIntervals(LocalDateTime start, LocalDateTime end){
-        List<TimeInterval> intervalsOnDay = TimeInterval.buildTimeIntervalList(start.toLocalDate());
-        TimeInterval.addAvailability(start, end, intervalsOnDay);
+    public static List<IntervaloTempo> listAllAvailableIntervals(LocalDateTime start, LocalDateTime end){
+        List<IntervaloTempo> intervalsOnDay = IntervaloTempo.buildTimeIntervalList(start.toLocalDate());
+        IntervaloTempo.adicionaDisponibilidade(start, end, intervalsOnDay);
         return intervalsOnDay
                 .stream()
-                .filter(TimeInterval::isAvailable)
+                .filter(IntervaloTempo::isAvailable)
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +60,7 @@ public class TimeInterval {
         return minExclusive.isBefore(time) && maxExclusive.isAfter(time);
     }
 
-    public boolean intersects(TimeInterval otherInterval){
+    public boolean intersects(IntervaloTempo otherInterval){
         return isInRange(this.start, this.end, otherInterval.getStart())
                 || isInRange(this.start, this.end, otherInterval.getEnd())
                 || isInRange(otherInterval.getStart(), otherInterval.getEnd(), this.start)
@@ -93,12 +92,12 @@ public class TimeInterval {
         this.available = available;
     }
 
-    public boolean hasSameStartAndEnd(TimeInterval a){
+    public boolean hasSameStartAndEnd(IntervaloTempo a){
        return a.getStart().equals(this.start)
                && a.getEnd().equals(this.end);
     }
 
-    public TimeInterval(LocalDateTime start, LocalDateTime end) {
+    public IntervaloTempo(LocalDateTime start, LocalDateTime end) {
         this.start = start;
         this.end = end;
         this.available = false;

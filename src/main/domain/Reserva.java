@@ -1,12 +1,10 @@
 package main.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Reserva {
-    private final LocalDateTime inicio, fim;
-
+    private final LocalDateTime inicio;
+    private final LocalDateTime fim;
     private final Sala sala;
 
     public Reserva(Sala sala, LocalDateTime inicio, LocalDateTime fim){
@@ -16,8 +14,8 @@ public class Reserva {
     }
 
     public boolean doesItIntersects(LocalDateTime start, LocalDateTime end){
-        TimeInterval thisInterval = new TimeInterval(this.inicio, this.fim);
-        return thisInterval.intersects(new TimeInterval(start, end));
+        final IntervaloTempo thisInterval = new IntervaloTempo(this.inicio, this.fim);
+        return thisInterval.intersects(new IntervaloTempo(start, end));
     }
 
     @Override
@@ -31,9 +29,15 @@ public class Reserva {
                && another.fim.equals(this.fim)
                && another.sala().equals(this.sala);
     }
-    public Sala sala() {return sala;}
+    public Sala sala() {
+        return sala;
+    }
 
-    public LocalDateTime inicio() {return inicio;}
+    public LocalDateTime inicio() {
+        return inicio;
+    }
 
-    public LocalDateTime fim() {return fim;}
+    public LocalDateTime fim() {
+        return fim;
+    }
 }
