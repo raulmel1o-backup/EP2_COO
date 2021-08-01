@@ -1,5 +1,6 @@
 package main;
 
+import infra.exception.GuestNotFoundException;
 import main.domain.GerenciadorDeSalas;
 import main.domain.MarcadorDeReuniao;
 import main.domain.Reserva;
@@ -19,7 +20,7 @@ import java.util.Scanner;
 public class Application {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private static final MarcadorDeReuniao MARCADOR_DE_REUNIAO = new MarcadorDeReuniao();
+    private static final MarcadorDeReuniao marcadorDeReuniao = new MarcadorDeReuniao();
     private static final GerenciadorDeSalas gerenciadorDeSalas = new GerenciadorDeSalas();
 
     private static final List<Reserva> reservas = new LinkedList<>();
@@ -76,7 +77,7 @@ public class Application {
         final String guestsStr = scanner.nextLine();
 
         try {
-            MARCADOR_DE_REUNIAO.marcarReuniaoEntre(LocalDate.parse(startStr),
+            marcadorDeReuniao.marcarReuniaoEntre(LocalDate.parse(startStr),
                     LocalDate.parse(endStr), Arrays.asList(guestsStr.split(";")));
         } catch (DateTimeParseException exception) {
             System.err.println("Insira as datas no formato indicado");
@@ -96,15 +97,17 @@ public class Application {
         final String endStr = scanner.nextLine();
 
         try {
-            MARCADOR_DE_REUNIAO.indicaDisponibilidade(emailStr,
+            marcadorDeReuniao.indicaDisponibilidade(emailStr,
                     LocalDateTime.parse(startStr, formatter), LocalDateTime.parse(endStr, formatter));
         } catch (DateTimeParseException exception) {
             System.err.println("Insira as datas no formato indicado");
+        } catch (GuestNotFoundException exception) {
+            System.err.println("Participante não encontrado");
         }
     }
 
     private static void handlePrintingOverlap() {
-        MARCADOR_DE_REUNIAO.mostraSobreposicao();
+        marcadorDeReuniao.mostraSobreposicao();
     }
 
     private static void handleAddingRoom(final Scanner scanner) {
@@ -125,7 +128,7 @@ public class Application {
     }
 
     private static void handleRemovingRoom(final Scanner scanner) {
-        System.out.println("Insira o nome da sala que será removida?");
+        System.out.println("Insira o nome da sala que será removida");
         final String nome = scanner.nextLine();
 
         try {
@@ -139,10 +142,10 @@ public class Application {
         System.out.println("Insira o nome da sala que será reservada");
         final String name = scanner.nextLine();
 
-        System.out.println("Insira o horario inicial (formato yyyy-MM-dd HH:mm)");
+        System.out.println("Insira o horário inicial (formato yyyy-MM-dd HH:mm)");
         final String start = scanner.nextLine();
 
-        System.out.println("Insira o horario final (formato yyyy-MM-dd HH:mm)");
+        System.out.println("Insira o horário final (formato yyyy-MM-dd HH:mm)");
         final String end = scanner.nextLine();
 
         try {

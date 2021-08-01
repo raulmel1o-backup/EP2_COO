@@ -1,5 +1,7 @@
 package main.domain;
 
+import infra.exception.GuestNotFoundException;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,6 +28,10 @@ public class MarcadorDeReuniao {
         }
 
         Participante convidado = guestsList.stream().filter(g -> g.getEmail().equals(participante)).collect(toList()).get(0);
+        if (convidado == null) {
+            throw new GuestNotFoundException();
+        }
+
         convidado.addAvailability(inicio, fim);
     }
   
