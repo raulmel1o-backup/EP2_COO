@@ -7,6 +7,7 @@ import main.infra.exception.RoomNotFoundException;
 import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GerenciadorDeSalas {
     private List<Sala> salas;
@@ -31,14 +32,11 @@ public class GerenciadorDeSalas {
         ) salas.add(nova);
     }
 
-    public Collection<Sala> getSalas(){
-        return salas;
-    }
 
     public Reserva reservaSalaChamada(String nomeDaSala, LocalDateTime inicio, LocalDateTime fim)
             throws RoomNotFoundException, DifferentDatesException, RoomAlreadyReservedException
     {
-        Reserva reserva = null;
+        Reserva reserva;
         Sala sala = getSala(nomeDaSala).orElseThrow(new RoomNotFoundException(nomeDaSala));
 
         if(!inicio.toLocalDate().equals(fim.toLocalDate()))
@@ -57,12 +55,35 @@ public class GerenciadorDeSalas {
         return reserva;
     }
 
-    public Collection<Reserva> reservasPraSala(String nomeSala){
-        return reservasPorSala.get(getSala(nomeSala).orElse(null));
+    public void cancelaReserva(Reserva cancelada) throws RoomNotFoundException{
+        if (cancelada == null) return;
+        try{
+            Sala sala = getSala(cancelada.sala()).orElseThrow(new RoomNotFoundException(cancelada.sala().getNome()));
+            List<Reserva> reservasSala = new ArrayList<>(reservasPraSala(sala));
+            reservasSala.remove(cancelada);
+            reservasPorSala.put(cancelada.sala(), reservasSala);
+            this.reservas.remove(cancelada);
+        }
+        catch(NullPointerException e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    public void imprimeReservasPraSala(String nomeSala) throws RoomNotFoundException{
+        Sala sala = getSala(nomeSala).orElseThrow(new RoomNotFoundException(nomeSala));
+        if(reservasPraSala(sala) == null) return;
+        reservasPraSala(nomeSala).forEach(System.out::println);
+
     }
 
     public Collection<Reserva> reservasPraSala(Sala sala){
         return reservasPorSala.get(sala);
+
+    }
+
+    public Collection<Reserva> reservasPraSala(String nomeSala){
+        return reservasPorSala.get(getSala(nomeSala).orElse(null));
     }
 
     public Optional<Sala> getSala(Sala salaProcurada){
@@ -71,6 +92,10 @@ public class GerenciadorDeSalas {
 
     public Optional<Sala> getSala(String nome){
         return Optional.ofNullable(salasPorNome.get(nome));
+    }
+
+    public Optional<Reserva> getReserva(Reserva reservationToFind){
+        return reservas.stream().filter(reserva -> reserva.equals(reservationToFind)).findFirst();
     }
 
 }

@@ -28,10 +28,8 @@ public class Sala {
 
     @Override
     public String toString(){
-        return    "Nome: " + nome + "\n"
-                + "Capacidade Maxima: " + capacidadeMax + "\n"
-                + "Observacoes: " + observacoes + "\n"
-                + "Local: " + local + "\n";
+        return    "Nome: \"" + nome + "\" Capacidade Maxima: " + capacidadeMax + "\n"
+                + "Observacoes: \"" + observacoes  + "\" Local: \"" + local + "\"\n";
     }
 
     public int getCapacidade() {
