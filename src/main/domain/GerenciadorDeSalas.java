@@ -95,6 +95,10 @@ public class GerenciadorDeSalas {
         return reservasPorSala.get(getSala(nomeSala).orElse(null));
     }
 
+    public List<Sala> listaDeSalas(){
+        return new ArrayList<>(salasPorNome.values());
+    }
+
     public Optional<Sala> getSala(Sala salaProcurada){
         return salas.stream().filter(sala -> sala.equals(salaProcurada)).findFirst();
     }
