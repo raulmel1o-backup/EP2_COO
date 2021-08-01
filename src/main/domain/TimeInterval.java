@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TimeInterval {
 
@@ -35,6 +36,15 @@ public class TimeInterval {
         return timeIntervals;
     }
 
+    public static List<TimeInterval> listAllAvailableIntervals(LocalDateTime start, LocalDateTime end){
+        List<TimeInterval> intervalsOnDay = TimeInterval.buildTimeIntervalList(start.toLocalDate());
+        TimeInterval.addAvailability(start, end, intervalsOnDay);
+        return intervalsOnDay
+                .stream()
+                .filter(TimeInterval::isAvailable)
+                .collect(Collectors.toList());
+    }
+
     public static List<LocalDate> getDatesBetween(LocalDateTime localDateTime1Inclusive,
                                            LocalDateTime localDateTime2Inclusive)
     {
@@ -45,6 +55,18 @@ public class TimeInterval {
         int days = (int) ChronoUnit.DAYS.between(localDateTime1Inclusive, localDateTime2Inclusive.plusDays(1));
         for(int numDays = 0; numDays < days; numDays++) dates.add(start.plusDays(numDays));
         return dates;
+    }
+
+    public static boolean isInRange(LocalDateTime minExclusive, LocalDateTime maxExclusive, LocalDateTime time) {
+        return minExclusive.isBefore(time) && maxExclusive.isAfter(time);
+    }
+
+    public boolean intersects(TimeInterval otherInterval){
+        return isInRange(this.start, this.end, otherInterval.getStart())
+                || isInRange(this.start, this.end, otherInterval.getEnd())
+                || isInRange(otherInterval.getStart(), otherInterval.getEnd(), this.start)
+                || isInRange(otherInterval.getStart(), otherInterval.getEnd(), this.end)
+                || hasSameStartAndEnd(otherInterval);
     }
 
     public LocalDateTime getStart() {
@@ -69,6 +91,11 @@ public class TimeInterval {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public boolean hasSameStartAndEnd(TimeInterval a){
+       return a.getStart().equals(this.start)
+               && a.getEnd().equals(this.end);
     }
 
     public TimeInterval(LocalDateTime start, LocalDateTime end) {
