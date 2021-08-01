@@ -74,6 +74,16 @@ public class GerenciadorDeSalas {
         }
     }
 
+    public void removeSalaChamada(String nomeDaSala) throws RoomNotFoundException{
+        Sala sala = getSala(nomeDaSala).orElseThrow(new RoomNotFoundException(nomeDaSala));
+        List<Reserva> reservasDeletar = reservasPorSala.get(salasPorNome.get(nomeDaSala));
+        if(reservasDeletar == null) return;
+        for (Reserva reserva : reservasDeletar) {
+            cancelaReserva(reserva);
+        }
+        salasPorNome.remove(nomeDaSala);
+    }
+
     public void imprimeReservasPraSala(String nomeSala) throws RoomNotFoundException{
         final Sala sala = getSala(nomeSala).orElseThrow(new RoomNotFoundException(nomeSala));
 
@@ -88,6 +98,10 @@ public class GerenciadorDeSalas {
 
     public Collection<Reserva> reservasPraSala(String nomeSala){
         return reservasPorSala.get(getSala(nomeSala).orElse(null));
+    }
+
+    public List<Sala> listaDeSalas(){
+        return new ArrayList<>(salasPorNome.values());
     }
 
     public Optional<Sala> getSala(Sala salaProcurada){

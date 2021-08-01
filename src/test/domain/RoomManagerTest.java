@@ -8,6 +8,7 @@ import main.infra.exception.RoomAlreadyReservedException;
 import main.infra.exception.RoomNotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class RoomManagerTest {
@@ -18,6 +19,7 @@ public class RoomManagerTest {
         Should_Raise_DifferentDaysException();
         Should_Print_Reservations();
         Should_Remove_Reservation();
+        Should_Remove_Room_With_Reservations();
     }
 
     private static void Should_Add_Room(){
@@ -137,6 +139,32 @@ public class RoomManagerTest {
             System.out.println("Room should not be reserved since it was added only once");
         }
     }
+
+    private static void Should_Remove_Room_With_Reservations(){
+        System.out.println("==============Should_Remove_Room==================");
+        GerenciadorDeSalas g = roomManagerBuilder();
+        try {
+            Sala sala = g.getSala("redrum").get();
+            Reserva r = g.reservaSalaChamada("redrum",
+                    LocalDateTime.now(),
+                    LocalDateTime.now().plusMinutes(15));
+            g.reservaSalaChamada("redrum",
+                    LocalDateTime.now().plusMinutes(15),
+                    LocalDateTime.now().plusMinutes(30));
+            g.removeSalaChamada("redrum");
+            if (g.getReserva(r).isPresent()) {
+                System.out.println("Removal didnt also remove reservations");
+            }
+            if (g.getSala("redrum").isPresent())
+                System.out.println("Room wasnot removed.");
+        }
+        catch (RoomNotFoundException | NoSuchElementException noSuch){
+            System.out.println("Couldn't find room \"redrum\"");
+        }
+        catch (RoomAlreadyReservedException ignored) {
+        }
+    }
+
     private static GerenciadorDeSalas roomManagerBuilder(){
         GerenciadorDeSalas g = new GerenciadorDeSalas();
         String nome = "redrum", desc = "Here's Johnny!";
@@ -146,4 +174,5 @@ public class RoomManagerTest {
 
         return g;
     }
+
 }
