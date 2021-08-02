@@ -3,6 +3,11 @@
 - Emanuel Tavares 
 - Raul Mello Silva (11870986)
 
+## Arquivos
+Este zip possui o código fonte dentro do diretório `src`, as classes 
+compiladas dentro do diretório `out` e o diagrama UML dentro do diretório 
+`resources`
+
 ## Compilação e Execução
 Para facilitar o trabalho de compilação e execução do programa foi criado um
 arquivo `Makefile`, dessa maneira, para compilar todo o programa é necessário 
