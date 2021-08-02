@@ -1,6 +1,6 @@
 # EP 2 — Computação Orientada a Objetos
 ### Autores
-- Emanuel Tavares 
+- Enrique Emanuel Rezende Tavares da Silva (11796090)
 - Raul Mello Silva (11870986)
 
 ## Arquivos
